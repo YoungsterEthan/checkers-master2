@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <list>
 #include "Checker.h"
 using namespace std;
 
@@ -11,7 +12,7 @@ using namespace std;
 
 class Player{
     private:
-        vector<Checker*> pieces;
+        list<Checker*> pieces;
         int numCaptured;
         char col;
 

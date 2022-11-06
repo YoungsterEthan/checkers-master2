@@ -34,30 +34,30 @@ int Game::update(){// checks if there is a winner at the end of each turn
         player1.allowed.clear();
         player2.allowed.clear();
         
-        vector<Checker*> instanceP1 = board->getInstances(player1.color);
-        vector<Checker*> instanceP2 = board->getInstances(player2.color);
+        queue<Checker*> instanceP1 = board->getInstances(player1.color);
+        queue<Checker*> instanceP2 = board->getInstances(player2.color);
         cout << "Instances of player 1";
-        for(auto x: instanceP1){
-            cout << x->getPosition() << " ";
-        }
+        // for(auto x: instanceP1){
+        //     cout << x->getPosition() << " ";
+        // }
 
-        cout <<  endl;
+        // cout <<  endl;
 
-        cout << "Instances of player 2";
-        for(auto x: instanceP2){
-            cout << x->getPosition() << " ";
-        }
-        cout <<  endl;
+        // cout << "Instances of player 2";
+        // for(auto x: instanceP2){
+        //     cout << x->getPosition() << " ";
+        // }
+        // cout <<  endl;
 
         player1.allowed = board->allowedMoves(board->getInstances(player1.color));
         player2.allowed = board->allowedMoves(board->getInstances(player2.color));
 
 
 
-    if(player1.numCaptured == 12 || player2.allowed.size() == 0){
+    if(scoreBoard[&player1] == 12 || player2.allowed.size() == 0){
         cout << "Player 1 wins" << endl;
         return 0;
-    } else if (player2.numCaptured == 12 || player1.allowed.size() == 0){
+    } else if (scoreBoard[&player2] == 12 || player1.allowed.size() == 0){
         cout << "Player 2 wins" << endl;
         return 0;
     }
@@ -67,7 +67,9 @@ int Game::update(){// checks if there is a winner at the end of each turn
     return 1;
 }
 
-Checker *Game::choosePiece(vector<Checker*> s){
+Checker *Game::choosePiece(list<Checker*> s){
+    list<Checker*>::iterator it;
+
     int i = 1;
     for(auto x: s){
         cout << i << ". " << x->getPosition() << endl;
@@ -80,15 +82,22 @@ Checker *Game::choosePiece(vector<Checker*> s){
     cin >> choice;
     choice = int(choice);
     }while(choice <= 0 || choice > i-1);
+    it = s.begin();
+
+    for(int i = 0; i < choice - 1; i++){
+        it++;
+    }
 
 
-    return s[choice - 1];
+    return *it;
 }
 
 coord Game::chooseDestination(Checker* piece){
+   set<coord>::iterator it = piece->moves.begin();
+
     int i = 1;
-    for(auto x: piece->moves){
-        cout << i << ". " << x << endl;
+    for(it; it != piece->moves.end(); it++){
+        cout << i << ". " << *it << endl;
         i++;
     }
 
@@ -97,12 +106,19 @@ coord Game::chooseDestination(Checker* piece){
     cout << "Choose a move" << endl;
     cin >> choice;
     }while(choice <= 0 || choice > i-1);
+    coord ans = *next(piece->moves.begin(), choice);
+    it = piece->moves.begin();
+    for(int i = 0; i < choice-1; i++){
+        it++;
+    }
+   
 
-    return piece->moves[choice - 1];
+    return *it;
     
 }
 
 void Game::capture(Checker *check1, Checker *check2){
+    check1->numCaptured++;
     currentPlayer->numCaptured +=1;
     cout << "Captured!" << endl;
     check2->change('0');
@@ -110,16 +126,19 @@ void Game::capture(Checker *check1, Checker *check2){
     int calcy = check2->getPosition().y - check1->getPosition().y;
 
     board->swap(check1, board->getchecker(check2->getPosition().x + calcx, check2->getPosition().y + calcy));
+    scoreBoard[currentPlayer]++;
 
 }
 
 
 void Game::Play(){
     bool canCapt = false;
-    vector<Checker*> attackers;
+    list<Checker*> attackers;
 
     do{
         board->Display();
+        cout << "Player 1 #captured: " << scoreBoard[&player1] << endl;
+        cout << "Player 2 #captured: " << scoreBoard[&player2] << endl;
         cout << currentPlayer->color << "'s turn" << endl;
 
         for(auto x: currentPlayer->allowed){

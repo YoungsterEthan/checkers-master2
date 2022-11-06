@@ -1,5 +1,6 @@
 #include "Board.h"
 #include <iostream>
+#include <string>
 using namespace std;
 
 Board::Board(int n){
@@ -45,8 +46,13 @@ Board::Board(int n){
             } else{
                 checkers[i][j] = new Checker(i,j, '0');
             }
+
+                listCheckers.push_back(checkers[i][j]);
             }
+            
         }
+
+        
 }
 
 Board::Board(const Board &b){
@@ -122,9 +128,6 @@ void Board::Display(){
     cout << "  |_________|_________|_________|_________|_________|_________|_________|_________|\n";
 }
 
-// void input()//asks player first to CHOOSE their piece using row and column # for exact location, then to MOVE using same concept
-// }
-
 
 
 Checker *Board::getchecker(int x, int y){
@@ -143,6 +146,9 @@ void Board::swap(Checker *check1, Checker *check2){
     // cout << "Check 1 old position: " << check1->getPosition() << endl;
     // cout << "Check 2 old position: " << check2->getPosition() << endl;
 
+    string desc = "(" + to_string(check1->getPosition().x) + "," + to_string(check1->getPosition().y) + ") to (" + to_string(check2->getPosition().x) + "," + to_string(check2->getPosition().y) + ")";
+    check1->descriptions.push(desc);
+
 
     checkers[check1->getPosition().x][check1->getPosition().y] = check2;
     checkers[check2->getPosition().x][check2->getPosition().y] = check1;
@@ -151,6 +157,8 @@ void Board::swap(Checker *check1, Checker *check2){
     coord temp = check1->getPosition();
     check1->changePosition(check2->getPosition());
     check2->changePosition(temp);
+    check1->numMoves++;
+    // check1->totalMoves++;
 
     // cout << "Check 1 new position: " << check1->getPosition() << endl;
     // cout << "Check 2 new position: " << check2->getPosition() << endl;
@@ -158,13 +166,13 @@ void Board::swap(Checker *check1, Checker *check2){
 
 }
 
- vector<Checker*> Board::getInstances(char color){   // returns vectors of instances of color
+ queue<Checker*> Board::getInstances(char color){   // returns vectors of instances of color
 
-    vector<Checker*> instances;
+    queue<Checker*> instances;
     for(int i = 0; i < 8; i++){
         for(int j = 0; j < 8; j++){
             if(checkers[i][j]->getColor() == color){
-                instances.push_back(checkers[i][j]);
+                instances.push(checkers[i][j]);
             }
         
     }
@@ -327,12 +335,15 @@ bool Board::isAllowed(Checker *checker){
 
 }
 
-vector<Checker*> Board::allowedMoves(vector<Checker*> instances){
-    vector<Checker*> allowed;
-    for(auto x: instances){
-        if(isAllowed(x)){
-            allowed.push_back(x);
+
+list<Checker*> Board::allowedMoves(queue<Checker*> instances){
+    list<Checker*> allowed;
+    
+    while (!instances.empty()){
+        if(isAllowed(instances.front())){
+            allowed.push_back(instances.front());
         }
+        instances.pop();
     }
 
     return allowed;

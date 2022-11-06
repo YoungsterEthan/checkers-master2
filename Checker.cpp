@@ -3,8 +3,10 @@
 Checker::Checker(int x, int y, char col){
     isKinged = false;
     color = col;
+    cOrig = col;
     pos.x = x;
     pos.y = y;
+    pOrig = pos;
     canCapture = false;
 
     if(col == 'B'){
@@ -25,6 +27,14 @@ Checker::Checker(int x, int y, char col){
 ostream& operator<<(ostream& os, const Checker& check){
     os << check.color;
     return os;
+}
+
+coord Checker::getOpos(){
+    return pOrig;
+}
+
+char Checker::getOc(){
+    return cOrig;
 }
 
 coord Checker::getPosition(){
@@ -61,7 +71,7 @@ void Checker::changePosition(coord newPos){
 void Checker::addMove(coord move){
     // cout << move << " added to" << pos << endl;
  
-    moves.push_back(move);
+    moves.insert(move);
 }
 
 void Checker::change(char col){

@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <set>
 using namespace std;
 
 #ifndef CHECKER_H
@@ -20,6 +22,14 @@ struct coord{
         else
             return false;
     }
+
+    bool operator<(const coord& rhs) const{
+        if(x == rhs.x){
+            return y < rhs.y;
+        } else{
+            return x < rhs.x;
+        }
+    }
 };
 
 class Checker{
@@ -27,7 +37,7 @@ class Checker{
         coord pos;
         char color;
         bool isKinged;
-        
+
         
         // int direction;
         
@@ -35,7 +45,13 @@ class Checker{
     public:
         int direction;
         bool canCapture;
-        vector<coord> moves;
+        set<coord> moves;
+        stack<string> descriptions;
+        int numMoves;
+        int numCaptured;
+        char cOrig;
+        coord pOrig;
+        // static int totalMoves;
         Checker(int x, int y, char col);
         // Checker(int, int, char);
         friend ostream& operator<<(ostream& os, const Checker& check);
@@ -46,6 +62,8 @@ class Checker{
         void addMove(coord move);
         void change(char col);
         void clear();
+        coord getOpos();
+        char getOc();
 
 };
 

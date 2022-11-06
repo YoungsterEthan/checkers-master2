@@ -5,6 +5,7 @@ using namespace std;
 #define GAME_H
 
 #include <vector>
+#include <map>
 #include "Checker.h"
 // #include "Player.h"
 #include "Board.h"
@@ -13,7 +14,7 @@ using namespace std;
 struct Player{
     char color;
     int numCaptured;
-    vector<Checker*> allowed;
+    list<Checker*> allowed;
 };
 
 class Game{
@@ -22,6 +23,7 @@ class Game{
     Board *board = new Board(8);
     Player player1, player2;
     Player *currentPlayer;
+    map<Player*, int> scoreBoard;
 
 
     
@@ -31,9 +33,10 @@ class Game{
     int update();
     void capture();
     coord chooseDestination(Checker* piece);
-    Checker* choosePiece(vector<Checker*> s);
+    Checker* choosePiece(list<Checker*> s);
     void capture(Checker *check1, Checker *check2);
     bool LegalMove(coord entry);
+    Board *getBoard() {return board;}
 
     void Play();
         
