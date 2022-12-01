@@ -29,13 +29,7 @@ ostream& operator<<(ostream& os, const Checker& check){
     return os;
 }
 
-coord Checker::getOpos(){
-    return pOrig;
-}
 
-char Checker::getOc(){
-    return cOrig;
-}
 
 coord Checker::getPosition(){
     return pos;
@@ -77,7 +71,3 @@ void Checker::addMove(coord move){
 void Checker::change(char col){
     color = col;
 }
-
-// void Checker::clear(){
-//     moves.clear();
-// }

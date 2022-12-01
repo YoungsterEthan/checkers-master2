@@ -137,9 +137,6 @@ Checker *Board::getchecker(int x, int y){
         return NULL;
 }
 
-int Board::getRows(){
-    return ROWS;
-}
 
 
 void Board::swap(Checker *check1, Checker *check2){

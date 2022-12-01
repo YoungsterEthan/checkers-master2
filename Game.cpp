@@ -36,7 +36,7 @@ int Game::update(){// checks if there is a winner at the end of each turn
         
         queue<Checker*> instanceP1 = board->getInstances(player1.color);
         queue<Checker*> instanceP2 = board->getInstances(player2.color);
-        cout << "Instances of player 1";
+
         // for(auto x: instanceP1){
         //     cout << x->getPosition() << " ";
         // }

@@ -22,14 +22,13 @@ class Board{
         Board(int n);//constructor
         Board(const Board & b);//copy constructor
         ~Board();//destructor
-        void Display();
-        Checker *getchecker(int x, int y);
-        list<Checker*> listCheckers;
+        void Display();                             //displays the checkerboard
+        Checker *getchecker(int x, int y);          //returns a checker given coordiantes
+        list<Checker*> listCheckers;                // checkerboard in 1D list
         queue<Checker*> getInstances(char color);    // returns vectors of instances of color
-        bool isAllowed(Checker *checker);
-        list<Checker*> allowedMoves(queue<Checker*> instances);
-        void swap(Checker *check1, Checker *check2);
-        int getRows();
+        bool isAllowed(Checker *checker);           // checks if a piece is allowed to move
+        list<Checker*> allowedMoves(queue<Checker*> instances); // returns a list of checkers that can move
+        void swap(Checker *check1, Checker *check2);            // moves a checkerpiece in given direction
 
 };
 

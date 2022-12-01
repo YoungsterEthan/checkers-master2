@@ -17,12 +17,12 @@ bool compareCaptured(Checker *check1, Checker *check2){
 
 int main(){
     //initialize game object
-    Game test;
+    Game game;
     //play game
-    test.Play();
+    game.Play();
     cout << "Game Stats" << endl;
     //get a list of the checker pieces with their original colors and positions to see their stats
-    list<Checker*> statsCheckers = test.getBoard()->listCheckers;
+    list<Checker*> statsCheckers = game.getBoard()->listCheckers;
     //sort based off number of pieces captured
     statsCheckers.sort(compareCaptured);
     list<Checker*>::iterator it = statsCheckers.begin();
@@ -43,12 +43,6 @@ int main(){
 
         }
     }
-    
-
-
-    
-
-    
 }
 
 
