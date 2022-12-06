@@ -3,7 +3,22 @@
 #include <string>
 using namespace std;
 
+Board::Board(){
+    ROWS = 8;
+        checkers = new Checker**[ROWS];  
+
+    for(int i = 0; i < ROWS; i++){
+        //Declare a memory block of size COLS (n since a checker board is square)
+        checkers[i] = new Checker*[ROWS];
+    }
+    numBoards+=1;
+    boardNum = numBoards;
+}
+
 Board::Board(int n){
+    // numBoards = 1;
+    boardNum = 1;
+
     ROWS = n;
     int COLS = n;
     checkers = new Checker**[ROWS];  
@@ -55,27 +70,24 @@ Board::Board(int n){
         
 }
 
-Board::Board(const Board &b){
-    ROWS = b.ROWS;
-    int COLS = ROWS;
-    checkers = new Checker**[ROWS];
 
-    for(int i = 0; i < ROWS; i++){
-        //Declare a memory block of size COLS (n since a checker board is square)
-        checkers[i] = new Checker*[COLS];
-    }
+
+Board *Board::copy(){
+    Board *b = new Board();
 
     for(int i = 0;i < ROWS; i++){   // follows the rows
-        for(int j = 0; j < ROWS; j++){  //follows the columns
-            checkers[i][j] = b.checkers[i][j];
+        for(int j = 0; j < ROWS; j++){
+            b->checkers[i][j] = new Checker(i,j, checkers[i][j]->getColor());
         }
     }
+
+    return b;
 
 }
 
 Board::~Board(){
       for(int i=0;i<ROWS;i++)    //To delete the inner arrays
-      delete [] checkers[i];   
+                delete [] checkers[i];   
 
       delete [] checkers;              //To delete the outer array
                               //which contained the pointers
@@ -142,9 +154,15 @@ Checker *Board::getchecker(int x, int y){
 void Board::swap(Checker *check1, Checker *check2){
     // cout << "Check 1 old position: " << check1->getPosition() << endl;
     // cout << "Check 2 old position: " << check2->getPosition() << endl;
+    // cout << "SWAP DONE IN BOARD #" << boardNum << endl;
 
-    string desc = "(" + to_string(check1->getPosition().x) + "," + to_string(check1->getPosition().y) + ") to (" + to_string(check2->getPosition().x) + "," + to_string(check2->getPosition().y) + ")";
-    check1->descriptions.push(desc);
+    // string desc = "(" + to_string(check1->getPosition().x) + "," + to_string(check1->getPosition().y) + ") to (" + to_string(check2->getPosition().x) + "," + to_string(check2->getPosition().y) + ")";
+    // check1->descriptions.push(desc);
+   
+    if(check1->getPosition() == check2->getPosition()){
+        cout << "We have a problem in board #" << boardNum << endl;
+        exit(0);
+    }
 
 
     checkers[check1->getPosition().x][check1->getPosition().y] = check2;
@@ -163,13 +181,13 @@ void Board::swap(Checker *check1, Checker *check2){
 
 }
 
- queue<Checker*> Board::getInstances(char color){   // returns vectors of instances of color
+ vector<Checker*> Board::getInstances(char color){   // returns vectors of instances of color
 
-    queue<Checker*> instances;
+    vector<Checker*> instances;
     for(int i = 0; i < 8; i++){
         for(int j = 0; j < 8; j++){
             if(checkers[i][j]->getColor() == color){
-                instances.push(checkers[i][j]);
+                instances.push_back(checkers[i][j]);
             }
         
     }
@@ -333,16 +351,27 @@ bool Board::isAllowed(Checker *checker){
 }
 
 
-list<Checker*> Board::allowedMoves(queue<Checker*> instances){
-    list<Checker*> allowed;
+vector<Checker*> Board::allowedMoves(vector<Checker*> instances){
+    vector<Checker*> allowed;
     
-    while (!instances.empty()){
-        if(isAllowed(instances.front())){
-            allowed.push_back(instances.front());
+    for(auto x: instances){
+        if(isAllowed(x)){
+            allowed.push_back(x);
         }
-        instances.pop();
     }
 
     return allowed;
 }
 
+void Board::capture(Checker *check1, Checker *check2){
+    // check1->numCaptured++;
+    // currentPlayer->numCaptured +=1;
+    if(boardNum == 1)
+        cout << "Captured!" << endl;
+    check2->change('0');
+    int calcx = check2->getPosition().x - check1->getPosition().x;
+    int calcy = check2->getPosition().y - check1->getPosition().y;
+
+    swap(check1, getchecker(check2->getPosition().x + calcx, check2->getPosition().y + calcy));
+    // scoreBoard[currentPlayer]++;
+}

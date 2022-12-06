@@ -7,22 +7,19 @@ using namespace std;
 #include <vector>
 #include <map>
 #include "Checker.h"
-// #include "Player.h"
+#include "Player.h"
 #include "Board.h"
+#include "Player.h"
 // #include "move.h"
 
-struct Player{
-    char color;
-    int numCaptured;
-    list<Checker*> allowed;
-};
 
 class Game{
     
     private:
     Board *board = new Board(8);    // creates board object
-    Player player1, player2;        //initialize player structs
-    Player *currentPlayer;          // pointer to player that is moving
+    Player player;       //initialize player structs
+    AI bot;
+    char currPlayer;
     map<Player*, int> scoreBoard;   //keeps track of pieces captured
 
 
