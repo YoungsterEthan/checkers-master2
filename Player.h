@@ -14,15 +14,17 @@ using namespace std;
 
 
 
-enum Side{
-    RED_SIDE,
-    BLACK_SIDE,
-};
 
 struct Move
 {
     Checker *piece;
     coord dest;
+};
+
+struct tree_node{
+    double heuristic;
+    Move move;
+    vector<tree_node> children;
 };
 
 
