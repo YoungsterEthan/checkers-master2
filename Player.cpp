@@ -62,10 +62,10 @@ Checker *Player::choosePiece(vector<Checker*> s){
 
 
 coord Player::chooseDestination(Checker* piece){
-   set<coord>::iterator it = piece->moves.begin();
+   set<coord>::iterator it; 
 
     int i = 1;
-    for(it; it != piece->moves.end(); it++){
+    for(it = piece->moves.begin(); it != piece->moves.end(); it++){
         cout << i << ". " << *it << endl;
         i++;
     }
@@ -75,7 +75,7 @@ coord Player::chooseDestination(Checker* piece){
     cout << "Choose a move" << endl;
     cin >> choice;
     }while(choice <= 0 || choice > i-1);
-    coord ans = *next(piece->moves.begin(), choice);
+    // coord ans = *next(piece->moves.begin(), choice);
     it = piece->moves.begin();
     for(int i = 0; i < choice-1; i++){
         it++;
@@ -108,14 +108,17 @@ char AI::switchColor(char col){
     return 'B';
 }
 
-void AI::makeMove(Board b){
+void AI::makeMove(Board *b){
     // cout << "IN AI MAKE MOVE" <<endl;
-    Move move = minimaxStart(b, getColor(), true);
+    Move move = minimaxStart(*b, getColor(), true);
     cout << "AI move:" << move.piece->getPosition() << " " << move.dest << endl;
     if(move.piece->canCapture)
-        b.capture(move.piece, b.getchecker(move.dest.x, move.dest.y));
-    else
-        b.swap(move.piece,  b.getchecker(move.dest.x, move.dest.y));
+        b->capture(move.piece, b->getchecker(move.dest.x, move.dest.y));
+    else{
+        cout << "swapped for ai" << endl;
+        cout << "Address in makemove = " << b << endl;
+        b->swap(move.piece,  b->getchecker(move.dest.x, move.dest.y));
+    }
 }
 
 vector<Move> AI::genMoveVec(vector<Checker*> allowed){
@@ -164,7 +167,7 @@ Move AI::minimaxStart(Board b, char col, bool maximizing){
         possible_moves = genMoveVec(allowed);
     }
 
-    cout <<  "POSSIBLE MOVES BEFORE MINIMAX" << endl;
+    // cout <<  "POSSIBLE MOVES BEFORE MINIMAX" << endl;
 
 // ;
 //     for(vector<Move>::iterator it = possible_moves.begin(); it!=possible_moves.end(); ){
@@ -175,9 +178,9 @@ Move AI::minimaxStart(Board b, char col, bool maximizing){
 //         }
 //     }
 // 
-    Board tempBoard;
+    // Board tempBoard;
     for(auto x: possible_moves){
-            tempBoard = *(b.copy());
+            Board tempBoard(b);
 
             Checker *tempCheck = tempBoard.getchecker(x.piece->getPosition().x,x.piece->getPosition().y);
             
@@ -214,6 +217,7 @@ Move AI::minimaxStart(Board b, char col, bool maximizing){
   
 
             heuristics.push_back(minimax(tempBoard, switchColor(col), !maximizing, depth-1, alpha, beta));    
+            // cout << "PUSHED BACK" << endl;
    
 
 
@@ -232,10 +236,10 @@ Move AI::minimaxStart(Board b, char col, bool maximizing){
         }
     }
     // cout << "CHECKED MAX HEURISTICS" << endl;
-    cout << "POSSIBLE MOVES BEFORE FINAL MOVE BEFORE CLEANING" << endl;
-    for(auto x: possible_moves){
-        cout << x.piece->getPosition() << " to " << x.dest << endl;
-    }
+    // cout << "POSSIBLE MOVES BEFORE FINAL MOVE BEFORE CLEANING" << endl;
+    // for(auto x: possible_moves){
+    //     cout << x.piece->getPosition() << " to " << x.dest << endl;
+    // }
 
     // cout << "MOVES SIZE BEFORE " << possible_moves.size() << endl;
     for(int i = 0; i < num_heuristics; i++){
@@ -250,10 +254,10 @@ Move AI::minimaxStart(Board b, char col, bool maximizing){
     // cout << "MOVES SIZE AFTER " << possible_moves.size() << endl;
 
     int num_moves = possible_moves.size();
-    cout << "POSSIBLE MOVES BEFORE FINAL MOVE AFTER CLEANING" << endl;
-    for(auto x: possible_moves){
-        cout << x.piece->getPosition() << " to " << x.dest << endl;
-    }
+    // cout << "POSSIBLE MOVES BEFORE FINAL MOVE AFTER CLEANING" << endl;
+    // for(auto x: possible_moves){
+    //     cout << x.piece->getPosition() << " to " << x.dest << endl;
+    // }
     Move final_move = possible_moves[rand() % num_moves];
     // cout << "CHOSE FINAL MOVE" << final_move.piece->getPosition() << " to " << final_move.dest << endl;
     return final_move;
@@ -291,10 +295,10 @@ double AI::minimax(Board b, char col, bool maximizing, int depth, int alpha, int
 
 
     int initial = 0;
-    Board tempBoard;
+    // Board tempBoard;
         if (maximizing) {
         for (auto x: possible_moves) {
-            tempBoard = *(b.copy());
+            Board tempBoard(b);
             Checker *tempCheck = tempBoard.getchecker(x.piece->getPosition().x,x.piece->getPosition().y);
 
             if(x.piece->canCapture){
@@ -326,9 +330,9 @@ double AI::minimax(Board b, char col, bool maximizing, int depth, int alpha, int
 
    
 
-            cout << "Before result" << endl;
+            // cout << "Before result" << endl;
             int result = minimax(tempBoard, switchColor(col), !maximizing, depth - 1, alpha, beta);
-            cout << "After result" << endl;
+            // cout << "After result" << endl;
             initial = max(result, initial);
             alpha = max(initial, alpha);
             if (alpha >= beta) {
@@ -339,7 +343,7 @@ double AI::minimax(Board b, char col, bool maximizing, int depth, int alpha, int
     } else {
         initial = 1000;
         for (auto x: possible_moves) {
-            tempBoard = *(b.copy());
+            Board tempBoard(b);
 
             Checker *tempCheck = tempBoard.getchecker(x.piece->getPosition().x,x.piece->getPosition().y);
             if(x.piece->canCapture){
@@ -408,8 +412,8 @@ double AI::getHeuristic(Board board) {
     int numBlack = blackPieces.size();
     int numRed = redPieces.size();
 
-    int numBlackKings;
-    int numRedKings;
+    int numBlackKings = 0;
+    int numRedKings = 0;
     for(auto x: blackPieces){
         if(x->getisKinged())
             numBlackKings++;
@@ -436,7 +440,8 @@ double AI::getHeuristic(Board board) {
 
 
     if (getColor() == 'B') {
-        (king_weight * numBlackKings + numBlack) - (king_weight * numRedKings + numRed);
+        cout << (king_weight * numBlackKings + numBlack) - (king_weight * numRedKings + numRed) << endl;
+        return (king_weight * numBlackKings + numBlack) - (king_weight * numRedKings + numRed);
     }
     return (king_weight * numRedKings + numRed) - (king_weight * numBlackKings + numBlack);
 }

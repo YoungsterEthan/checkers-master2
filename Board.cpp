@@ -3,7 +3,7 @@
 #include <string>
 using namespace std;
 
-Board::Board(){
+Board::Board(Board &b){
     ROWS = 8;
         checkers = new Checker**[ROWS];  
 
@@ -11,12 +11,21 @@ Board::Board(){
         //Declare a memory block of size COLS (n since a checker board is square)
         checkers[i] = new Checker*[ROWS];
     }
+
+        for(int i = 0;i < ROWS; i++){   // follows the rows
+        for(int j = 0; j < ROWS; j++){
+            checkers[i][j] = new Checker(i,j, b.getchecker(i,j)->getColor());
+        }
+    }
+
+
+
     numBoards+=1;
     boardNum = numBoards;
 }
 
 Board::Board(int n){
-    // numBoards = 1;
+    numBoards = 1;
     boardNum = 1;
 
     ROWS = n;
@@ -72,18 +81,18 @@ Board::Board(int n){
 
 
 
-Board *Board::copy(){
-    Board *b = new Board();
+// Board *Board::copy(){
+//     Board *b = new Board();
 
-    for(int i = 0;i < ROWS; i++){   // follows the rows
-        for(int j = 0; j < ROWS; j++){
-            b->checkers[i][j] = new Checker(i,j, checkers[i][j]->getColor());
-        }
-    }
+//     for(int i = 0;i < ROWS; i++){   // follows the rows
+//         for(int j = 0; j < ROWS; j++){
+//             b->checkers[i][j] = new Checker(i,j, checkers[i][j]->getColor());
+//         }
+//     }
 
-    return b;
+//     return b;
 
-}
+// }
 
 Board::~Board(){
       for(int i=0;i<ROWS;i++)    //To delete the inner arrays
@@ -373,5 +382,31 @@ void Board::capture(Checker *check1, Checker *check2){
     int calcy = check2->getPosition().y - check1->getPosition().y;
 
     swap(check1, getchecker(check2->getPosition().x + calcx, check2->getPosition().y + calcy));
+    // check1->canCapture = false;
+
+    // if(isAllowed(check1)){
+    //     if(check1->canCapture){
+    //         set<coord>::iterator it; 
+
+    //         int i = 1;
+    //         for(it = check1->moves.begin(); it != check1->moves.end(); it++){
+    //             cout << i << ". " << *it << endl;
+    //             i++;
+    //         }
+
+    //         int choice;
+    //         do{
+    //         cout << "Choose a move" << endl;
+    //         cin >> choice;
+    //         }while(choice <= 0 || choice > i-1);
+    //         it = check1->moves.begin();
+    //         for(int i = 0; i < choice-1; i++){
+    //             it++;
+    //         }
+
+    //         swap(check1, getchecker(it->x, it->y));
+    //         cout << "Double jump" << endl;
+    //     }
+    // }
     // scoreBoard[currentPlayer]++;
 }

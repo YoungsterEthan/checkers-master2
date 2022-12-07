@@ -16,6 +16,10 @@ const int SIZE = 8;
 int main(){
     //initialize game object
     // srand(static_cast<unsigned int>(time(0)));
+
+    cout << "TETDE" << endl;;
+
+    cout << "tests" << endl;
     Game game;
     //play game
     game.Play();

@@ -20,13 +20,13 @@ class Board{
 
 
     public:
-        Board();
+        Board(Board &b);
         Board(int n);//constructor
         inline static int numBoards = 1;
         int boardNum;
 
         ~Board();//destructor
-        Board *copy();
+        // Board *copy();
         void Display();                             //displays the checkerboard
         Checker *getchecker(int x, int y);          //returns a checker given coordiantes
         list<Checker*> listCheckers;                // checkerboard in 1D list

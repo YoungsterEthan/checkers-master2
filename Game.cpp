@@ -41,12 +41,12 @@ int Game::update(){// checks if there is a winner at the end of each turn
 
 
 void Game::Play(){
-
+    cout << "Address in main: " << board << endl;
     do{
         board->Display();
  
-        // cout << "Num Black: " << board->getInstances('B').size() << endl;
-        // cout << "Num Red: " << board->getInstances('R').size() << endl;
+        cout << "Num Black: " << board->getInstances('B').size() << endl;
+        cout << "Num Red: " << board->getInstances('R').size() << endl;
 
         cout << currPlayer << "'s turn" << endl;
 
@@ -55,7 +55,7 @@ void Game::Play(){
         if(currPlayer == 'R')
             player.makeMove(board);
         else
-            bot.makeMove(*board);
+            bot.makeMove(board);
 
         changeTurns();
 

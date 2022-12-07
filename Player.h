@@ -47,10 +47,10 @@ class AI : public Player{
         int depth;
     public:
         AI() : Player(){
-            depth = 3;
+            depth = 5;
         }
         // void capture(Checker *check1, Checker *check2, Board board);
-        void makeMove(Board b);
+        void makeMove(Board *b);
         Move minimaxStart(Board b, char col, bool maximizing);
         double minimax(Board b, char col, bool maximizing, int depth, int alpha, int beta);
         double getHeuristic(Board board);
